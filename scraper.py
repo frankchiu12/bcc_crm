@@ -125,6 +125,8 @@ def scrape_person(company_to_search, url_list_to_search):
         # account for edge cases
         if 'yrs' in company and 'mos' in company:
             company = company_to_search
+        if company == 'Full-time':
+            company = company_to_search
 
         # call the API
         email = call_API(company_to_search + '.com', first_name, last_name)
@@ -145,7 +147,7 @@ def scrape_person(company_to_search, url_list_to_search):
     df.to_csv('database.csv')
 
 # TODO: change
-company_to_search = 'Apple'
+company_to_search = 'Google'
 login()
 search_res = search(company_to_search, 'corporate strategy')
 scrape_person(company_to_search, search_res)
