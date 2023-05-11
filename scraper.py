@@ -2,18 +2,15 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
 from credentials import CREDENTIALS
 import time
 from api import call_API
 
-chrome_options = Options()
-chrome_options.add_experimental_option('detach', True)
 # need to sleep to wait for the Javascript to load
 SLEEP_TIME = 2
 df = pd.DataFrame()
 
-driver = webdriver.Chrome(options=chrome_options)
+driver = webdriver.Chrome()
 driver.maximize_window()
 
 def login():
