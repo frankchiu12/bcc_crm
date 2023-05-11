@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from credentials import CREDENTIALS
 import time
+from api import call_API
 
 chrome_options = Options()
 chrome_options.add_experimental_option('detach', True)
@@ -85,9 +86,11 @@ def search(company_to_search, role_to_search):
 
 def scrape_person(company_to_search, url_list_to_search):
     url_list_to_search = [x.partition('?')[0] for x in url_list_to_search]
-    name_list = []
+    first_name_list = []
+    last_name_list = []
     company_list = []
     role_list = []
+    email_list = []
     url_list = []
 
     for url in url_list_to_search:
@@ -97,6 +100,8 @@ def scrape_person(company_to_search, url_list_to_search):
         soup = BeautifulSoup(html, features='lxml')
         # get the name
         name = soup.find("h1").get_text().strip().replace('\n', '').replace('  ', ' ')
+        first_name = name.partition(',')[0].split(' ')[0]
+        last_name = name.partition(',')[0].split(' ')[-1]
 
         # get the experience section
         driver.get(url + '/details/experience/')
@@ -121,19 +126,26 @@ def scrape_person(company_to_search, url_list_to_search):
         if 'yrs' in company and 'mos' in company:
             company = company_to_search
 
-        name_list.append(name)
+        # call the API
+        email = call_API(company_to_search + '.com', first_name, last_name)
+
+        first_name_list.append(first_name)
+        last_name_list.append(last_name)
         role_list.append(role)
         company_list.append(company)
+        email_list.append(email)
         url_list.append(url)
-    
-    df['name'] = name_list
+
+    df['first_name'] = first_name_list
+    df['last_name'] = last_name_list
     df['role'] = role_list
     df['company'] = company_list
+    df['email'] = email_list
     df['url'] = url_list
     df.to_csv('database.csv')
 
 # TODO: change
-company_to_search = 'Microsoft'
+company_to_search = 'Apple'
 login()
 search_res = search(company_to_search, 'corporate strategy')
 scrape_person(company_to_search, search_res)
