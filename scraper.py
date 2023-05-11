@@ -71,7 +71,7 @@ def search(company_to_search, role_to_search):
     action.perform()
     time.sleep(SLEEP_TIME)
 
-    # grabs all of the urls of the 
+    # grabs all of the urls of the found people
     html = driver.page_source
     soup = BeautifulSoup(html, features='lxml')
     url_list = []
